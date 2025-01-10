@@ -8,11 +8,9 @@ use Psl\Result\ResultInterface;
 use Psl\Type;
 
 /**
- * @psalm-suppress UnusedParam
- *
- * @param Map&ResultInterface&stdClass&Vector $value
+ * @param Map&ResultInterface&stdClass&Vector $_value
  */
-function takes_valid_intersection($value): void
+function takes_valid_intersection($_value): void
 {
 }
 
@@ -23,10 +21,7 @@ function test(): void
         Type\instance_of(Map::class),
         Type\intersection(
             Type\instance_of(ResultInterface::class),
-            Type\intersection(
-                Type\instance_of(stdClass::class),
-                Type\instance_of(Vector::class),
-            )
+            Type\intersection(Type\instance_of(stdClass::class), Type\instance_of(Vector::class)),
         ),
     );
 

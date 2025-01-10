@@ -52,9 +52,9 @@ final class SuccessTest extends TestCase
     public function testProceed(): void
     {
         $wrapper = new Success('hello');
-        $actual  = $wrapper->proceed(
-            static fn (string $result): int => 200,
-            static fn (Exception $exception): int => 404
+        $actual = $wrapper->proceed(
+            static fn(string $_result): int => 200,
+            static fn(Exception $_exception): int => 404,
         );
 
         static::assertSame(200, $actual);
@@ -63,10 +63,7 @@ final class SuccessTest extends TestCase
     public function testThenToSuccess(): void
     {
         $wrapper = new Success('hello');
-        $actual    = $wrapper->then(
-            Fun\identity(),
-            Fun\rethrow()
-        );
+        $actual = $wrapper->then(Fun\identity(), Fun\rethrow());
 
         static::assertNotSame($wrapper, $actual);
         static::assertTrue($actual->isSucceeded());
@@ -76,12 +73,12 @@ final class SuccessTest extends TestCase
     public function testThenToFailure(): void
     {
         $exception = new Exception('bar');
-        $wrapper   = new Success('hello');
-        $actual    = $wrapper->then(
+        $wrapper = new Success('hello');
+        $actual = $wrapper->then(
             static function () use ($exception) {
                 throw $exception;
             },
-            Fun\rethrow()
+            Fun\rethrow(),
         );
 
         static::assertFalse($actual->isSucceeded());
@@ -91,7 +88,7 @@ final class SuccessTest extends TestCase
     public function testCatch(): void
     {
         $wrapper = new Success('hello');
-        $actual    = $wrapper->catch(static function () {
+        $actual = $wrapper->catch(static function () {
             throw new Exception('Dont call us, we\'ll call you!');
         });
 
@@ -103,14 +100,14 @@ final class SuccessTest extends TestCase
     public function testMap(): void
     {
         $wrapper = new Success('hello');
-        $actual    = $wrapper->map(Fun\identity());
+        $actual = $wrapper->map(Fun\identity());
 
         static::assertNotSame($wrapper, $actual);
         static::assertTrue($actual->isSucceeded());
         static::assertSame('hello', $actual->getResult());
 
         $wrapper = new Success('hello');
-        $actual    = $wrapper->map(static fn() => throw new Exception('bye'));
+        $actual = $wrapper->map(static fn() => throw new Exception('bye'));
 
         static::assertNotSame($wrapper, $actual);
         static::assertFalse($actual->isSucceeded());
@@ -122,7 +119,7 @@ final class SuccessTest extends TestCase
     {
         $ref = new Psl\Ref('');
         $wrapper = new Success('hello');
-        $actual    = $wrapper->always(static function () use ($ref) {
+        $actual = $wrapper->always(static function () use ($ref) {
             $ref->value .= 'hey';
         });
 

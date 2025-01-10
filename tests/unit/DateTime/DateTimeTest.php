@@ -34,7 +34,7 @@ final class DateTimeTest extends TestCase
     public function testTodayAt(): void
     {
         $now = DateTime::now();
-        $today = DateTime::todayAt(14, 00, 00);
+        $today = DateTime::todayAt(14, 0o0, 0o0);
 
         static::assertSame($now->getDate(), $today->getDate());
         static::assertNotSame($now->getTime(), $today->getTime());
@@ -72,12 +72,12 @@ final class DateTimeTest extends TestCase
         static::assertSame(0, $datetime->getMinutes());
         static::assertSame(0, $datetime->getSeconds());
         static::assertSame(1, $datetime->getNanoseconds());
-        static::assertSame([2024, 2, 4, 14, 0, 0, 1,], $datetime->getParts());
+        static::assertSame([2024, 2, 4, 14, 0, 0, 1], $datetime->getParts());
     }
 
     public function testFromPartsWithDefaults(): void
     {
-        $datetime = DateTime::fromParts(Timezone::UTC, 2024, Month::February, 4,);
+        $datetime = DateTime::fromParts(Timezone::UTC, 2024, Month::February, 4);
 
         static::assertSame(Timezone::UTC, $datetime->getTimezone());
         static::assertSame(2024, $datetime->getYear());
@@ -90,7 +90,6 @@ final class DateTimeTest extends TestCase
         static::assertSame(0, $datetime->getNanoseconds());
     }
 
-
     /**
      * @dataProvider provideInvalidComponentParts
      */
@@ -102,7 +101,7 @@ final class DateTimeTest extends TestCase
         int $hours,
         int $minutes,
         int $seconds,
-        int $nanoseconds
+        int $nanoseconds,
     ): void {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -113,12 +112,66 @@ final class DateTimeTest extends TestCase
     public static function provideInvalidComponentParts(): array
     {
         return [
-            ['Unexpected year value encountered. Provided "0", but the calendar expects "1". Check the year for accuracy and ensure it\'s within the supported range.', 0, 1, 1, 0, 0, 0, 0],
-            ['Unexpected month value encountered. Provided "0", but the calendar expects "12". Ensure the month is within the 1-12 range and matches the specific year context.', 2024, 0, 1, 0, 0, 0, 0],
-            ['Unexpected day value encountered. Provided "0", but the calendar expects "31". Ensure the day is valid for the given month and year, considering variations like leap years.', 2024, 1, 0, 0, 0, 0, 0],
-            ['Unexpected hours value encountered. Provided "-1", but the calendar expects "23". Ensure the hour falls within a 24-hour day.', 2024, 1, 1, -1, 0, 0, 0],
-            ['Unexpected minutes value encountered. Provided "-1", but the calendar expects "59". Check the minutes value for errors and ensure it\'s within the 0-59 range.', 2024, 1, 1, 0, -1, 0, 0],
-            ['Unexpected seconds value encountered. Provided "59", but the calendar expects "-1". Ensure the seconds are correct and within the 0-59 range.', 2024, 1, 1, 0, 0, -1, 0],
+            [
+                'Unexpected year value encountered. Provided "0", but the calendar expects "1". Check the year for accuracy and ensure it\'s within the supported range.',
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+            ],
+            [
+                'Unexpected month value encountered. Provided "0", but the calendar expects "12". Ensure the month is within the 1-12 range and matches the specific year context.',
+                2024,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+            ],
+            [
+                'Unexpected day value encountered. Provided "0", but the calendar expects "31". Ensure the day is valid for the given month and year, considering variations like leap years.',
+                2024,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ],
+            [
+                'Unexpected hours value encountered. Provided "-1", but the calendar expects "23". Ensure the hour falls within a 24-hour day.',
+                2024,
+                1,
+                1,
+                -1,
+                0,
+                0,
+                0,
+            ],
+            [
+                'Unexpected minutes value encountered. Provided "-1", but the calendar expects "59". Check the minutes value for errors and ensure it\'s within the 0-59 range.',
+                2024,
+                1,
+                1,
+                0,
+                -1,
+                0,
+                0,
+            ],
+            [
+                'Unexpected seconds value encountered. Provided "59", but the calendar expects "-1". Ensure the seconds are correct and within the 0-59 range.',
+                2024,
+                1,
+                1,
+                0,
+                0,
+                -1,
+                0,
+            ],
         ];
     }
 
@@ -141,13 +194,16 @@ final class DateTimeTest extends TestCase
 
         static::assertSame('4 Feb 2024, 14:00:00', $datetime->toString());
         static::assertSame('04/02/2024, 14:00:00', $datetime->toString(date_style: DateStyle::Short));
-        static::assertSame('4 Feb 2024, 14:00:00 Greenwich Mean Time', $datetime->toString(time_style: TimeStyle::Full));
+        static::assertSame(
+            '4 Feb 2024, 14:00:00 Greenwich Mean Time',
+            $datetime->toString(time_style: TimeStyle::Full),
+        );
         static::assertSame('4 Feb 2024, 15:00:00', $datetime->toString(timezone: TimeZone::EuropeBrussels));
 
         // Formatting depends on version of intl - so compare with intl version instead of hardcoding a label:
         static::assertSame(
             create_intl_date_formatter(locale: Locale::DutchBelgium)->format($datetime->getTimestamp()->getSeconds()),
-            $datetime->toString(locale: Locale::DutchBelgium)
+            $datetime->toString(locale: Locale::DutchBelgium),
         );
     }
 
@@ -163,7 +219,7 @@ final class DateTimeTest extends TestCase
         // Formatting depends on version of intl - so compare with intl version instead of hardcoding a label:
         static::assertSame(
             create_intl_date_formatter(locale: Locale::DutchBelgium)->format($datetime->getTimestamp()->getSeconds()),
-            $datetime->toString(locale: Locale::DutchBelgium)
+            $datetime->toString(locale: Locale::DutchBelgium),
         );
     }
 
@@ -512,7 +568,7 @@ final class DateTimeTest extends TestCase
     public function testTimezoneInfo()
     {
         $timeZone = Timezone::EuropeBrussels;
-        $date = DateTime::fromParts($timeZone, 2024, 01, 01);
+        $date = DateTime::fromParts($timeZone, 2024, 0o1, 0o1);
 
         static::assertSame(!$timeZone->getDaylightSavingTimeOffset($date)->isZero(), $date->isDaylightSavingTime());
         static::assertEquals($timeZone->getOffset($date), $date->getTimezoneOffset());
@@ -520,7 +576,7 @@ final class DateTimeTest extends TestCase
 
     public function testConvertTimeZone()
     {
-        $date = DateTime::fromParts(Timezone::EuropeBrussels, 2024, 01, 01, 1);
+        $date = DateTime::fromParts(Timezone::EuropeBrussels, 2024, 0o1, 0o1, 1);
         $converted = $date->convertToTimezone($london = Timezone::EuropeLondon);
 
         static::assertSame($london, $converted->getTimezone());

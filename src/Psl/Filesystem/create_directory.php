@@ -16,22 +16,20 @@ use function mkdir;
  *
  * @throws Exception\RuntimeException If unable to create the directory.
  */
-function create_directory(string $directory, int $permissions = 0777): void
+function create_directory(string $directory, int $permissions = 0o777): void
 {
     if (namespace\is_directory($directory)) {
         return;
     }
 
-    [$result, $error_message] = Internal\box(
-        static fn() => mkdir($directory, $permissions, true)
-    );
+    [$result, $error_message] = Internal\box(static fn() => mkdir($directory, $permissions, true));
 
     // @codeCoverageIgnoreStart
     if (false === $result && !namespace\is_directory($directory)) {
         throw new Exception\RuntimeException(Str\format(
             'Failed to create directory "%s": %s.',
             $directory,
-            $error_message ?? 'internal error'
+            $error_message ?? 'internal error',
         ));
     }
     // @codeCoverageIgnoreEnd

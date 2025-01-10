@@ -15,21 +15,32 @@ final class DirectoryTest extends AbstractFilesystemTest
 
     public function testReadDirectory(): void
     {
-        Filesystem\create_file(Str\join([
-            $this->directory, 'hello.txt'
-        ], Filesystem\SEPARATOR));
+        Filesystem\create_file(Str\join(
+            [
+                $this->directory,
+                'hello.txt',
+            ],
+            Filesystem\SEPARATOR,
+        ));
 
-        Filesystem\create_directory(Str\join([
-            $this->directory, 'foo'
-        ], Filesystem\SEPARATOR));
+        Filesystem\create_directory(Str\join(
+            [
+                $this->directory,
+                'foo',
+            ],
+            Filesystem\SEPARATOR,
+        ));
 
         $children = Filesystem\read_directory($this->directory);
 
         static::assertCount(2, $children);
-        static::assertSame([
-            Str\join([$this->directory, 'foo'], Filesystem\SEPARATOR),
-            Str\join([$this->directory, 'hello.txt'], Filesystem\SEPARATOR),
-        ], Vec\sort($children));
+        static::assertSame(
+            [
+                Str\join([$this->directory, 'foo'], Filesystem\SEPARATOR),
+                Str\join([$this->directory, 'hello.txt'], Filesystem\SEPARATOR),
+            ],
+            Vec\sort($children),
+        );
     }
 
     public function testReadDirectoryThrowsIfDirectoryDoesNotExist(): void
@@ -42,9 +53,13 @@ final class DirectoryTest extends AbstractFilesystemTest
 
     public function testReadDirectoryThrowsIfNotDirectory(): void
     {
-        $filename = Str\join([
-            $this->directory, 'hello.txt'
-        ], Filesystem\SEPARATOR);
+        $filename = Str\join(
+            [
+                $this->directory,
+                'hello.txt',
+            ],
+            Filesystem\SEPARATOR,
+        );
 
         Filesystem\create_file($filename);
 
@@ -56,7 +71,7 @@ final class DirectoryTest extends AbstractFilesystemTest
 
     public function testReadDirectoryThrowsIfNotReadable(): void
     {
-        Filesystem\change_permissions($this->directory, 0077);
+        Filesystem\change_permissions($this->directory, 0o077);
 
         $this->expectException(Filesystem\Exception\NotReadableException::class);
         $this->expectExceptionMessage('Directory "' . $this->directory . '" is not readable.');
@@ -66,7 +81,7 @@ final class DirectoryTest extends AbstractFilesystemTest
         } finally {
             // restore $this->directory permissions, otherwise we won't
             // be able to delete it.
-            Filesystem\change_permissions($this->directory, 0777);
+            Filesystem\change_permissions($this->directory, 0o777);
         }
     }
 

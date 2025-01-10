@@ -5,11 +5,9 @@ declare(strict_types=1);
 use Psl\Type;
 
 /**
- * @psalm-suppress UnusedParam
- *
  * @param 'PENDING'|'PROCESSING'|'COMPLETED'|'ERROR' $state
  */
-function takes_valid_state(string $state): void
+function takes_valid_state(string $_state): void
 {
 }
 
@@ -20,11 +18,8 @@ function test(): void
         Type\literal_scalar('PENDING'),
         Type\union(
             Type\literal_scalar('PROCESSING'),
-            Type\union(
-                Type\literal_scalar('COMPLETED'),
-                Type\literal_scalar('ERROR'),
-            )
-        )
+            Type\union(Type\literal_scalar('COMPLETED'), Type\literal_scalar('ERROR')),
+        ),
     );
 
     /** @psalm-suppress MissingThrowsDocblock */

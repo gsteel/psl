@@ -64,7 +64,7 @@ function test_some_unzip(): array
  */
 function test_some_zip_with()
 {
-    return Option\some(1)->zipWith(Option\some('2'), static fn($a, $b) => $a + (int) $b);
+    return Option\some(1)->zipWith(Option\some('2'), static fn($a, $b) => $a + ((int) $b));
 }
 
 /**
@@ -72,5 +72,5 @@ function test_some_zip_with()
  */
 function test_some_zip_with_2()
 {
-    return Option\some(1)->zipWith(Option\some('2'), static fn($a, $b) => $b);
+    return Option\some(1)->zipWith(Option\some('2'), static fn($_a, $b) => $b);
 }
